@@ -52,9 +52,13 @@ func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 	}
 	for _, container := range containers {
 		if container.Image == c.config.Image {
-			err := client.StopImage(container.ID)
-			if err != nil {
+			if err := client.PullImage(c.config.Image); err != nil {
 				log.Fatal(err)
+				return "", err
+			}
+			if err := client.StopImage(container.ID); err != nil {
+				log.Fatal(err)
+				return "", err
 			} else {
 				id, err := client.StartImage(c)
 				return id, err
@@ -67,11 +71,7 @@ func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 
 func (client dockerClient) StartImage(c Container) (string, error) {
 	bg := context.Background()
-	if err := client.PullImage(bg, c.config.Image); err != nil {
-		log.Fatal(err)
-	}
-
-	resp, err := client.api.ContainerCreate(bg, &c.config, &c.hostConfig, nil, nil, "")
+	resp, err := client.api.ContainerCreate(bg, &c.config, &c.hostConfig, nil, nil, "blog")
 	if err != nil {
 		return "", err
 	}
@@ -97,7 +97,8 @@ func (client dockerClient) RenameImage() {
 	
 }
 
-func (client dockerClient) PullImage(ctx context.Context, image string) error {
+func (client dockerClient) PullImage(image string) error {
+	ctx := context.Background()
 	response, err := client.api.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
 		log.Fatalf("Error pulling image %s, %s", image, err)

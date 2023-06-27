@@ -23,7 +23,7 @@ func NewListener(client c.Client) Listener {
 
 		id, err := client.CreateUpdateContainer(c.NewContainer(p));
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("Error updating image: %s", err)
 		}
 		log.Printf("Started %s", id)
 
