@@ -52,9 +52,13 @@ func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 	}
 	for _, container := range containers {
 		if container.Image == c.config.Image {
-			client.StopImage(container.ID)
-			id, err := client.StartImage(c)
-			return id, err
+			err := client.StopImage(container.ID)
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				id, err := client.StartImage(c)
+				return id, err
+			}
 		}
 	}
 	id, err := client.StartImage(c)
