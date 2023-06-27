@@ -87,7 +87,7 @@ func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 		}
 	}
 	id, err := client.StartImage(c)
-	return "", nil
+	return id, nil
 }
 
 func (client dockerClient) StartImage(c Container) (string, error) {
