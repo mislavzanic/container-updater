@@ -21,12 +21,18 @@ func NewListener(client c.Client) Listener {
 			log.Fatal(err)
 		}
 
-		id, err := client.CreateUpdateContainer(c.NewContainer(p));
-		if err != nil {
-			log.Fatalf("Error updating image: %s", err)
+		switch p.RequestType {
+		case t.CreateUpdate: 
+			id, err := client.CreateUpdateContainer(c.NewContainer(p));
+			if err != nil {
+				log.Fatalf("Error updating image: %s", err)
+			}
+			log.Printf("Started %s", id)
+		case t.Update: 
+			if err := client.UpdateContainer(c.NewContainer(p)); err != nil {
+			    log.Fatalf("Error updating image: %s", err)
+			}
 		}
-		log.Printf("Started %s", id)
-
 	}
 
 	return Listener{

@@ -14,6 +14,7 @@ type Client interface {
 	StopImage(string) error
 	ListContainers() ([]types.Container, error)
 	CreateUpdateContainer(Container) (string, error)
+	UpdateContainer(Container) (error)
 	RenameImage()
 }
 
@@ -45,6 +46,26 @@ func (client dockerClient) ListContainers() ([]types.Container, error) {
 	return containers, nil
 }
 
+func (client dockerClient) UpdateContainer(c Container) error {
+	containers, err := client.ListContainers()
+	if err != nil {
+		return err
+	}
+	for _, container := range containers {
+		if container.Image == c.config.Image {
+			if err := client.PullImage(c.config.Image); err != nil {
+				log.Fatal(err)
+				return err
+			}
+			if err := client.StopImage(container.ID); err != nil {
+				log.Fatal(err)
+				return err
+			} 
+		}
+	}
+	return nil
+}
+
 func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 	containers, err := client.ListContainers()
 	if err != nil {
@@ -66,7 +87,7 @@ func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 		}
 	}
 	id, err := client.StartImage(c)
-	return id, nil
+	return "", nil
 }
 
 func (client dockerClient) StartImage(c Container) (string, error) {
