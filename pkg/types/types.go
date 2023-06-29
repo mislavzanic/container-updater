@@ -7,8 +7,10 @@ const (
 
 type Payload struct {
 	Image string
+	Name string
 	PortBindings []PortBinding
 	RequestType string
+	Secret string
 }
 
 type PortBinding struct {

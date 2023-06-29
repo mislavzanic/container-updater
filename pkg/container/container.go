@@ -10,6 +10,7 @@ type Container struct {
 	config container.Config
 	id string
 	hostConfig container.HostConfig
+	name string
 }
 
 func NewContainer(payload t.Payload) Container {
@@ -28,5 +29,6 @@ func NewContainer(payload t.Payload) Container {
 			PortBindings: pm,
 		},
 		id: "",
+		name: payload.Name,
 	}
 }

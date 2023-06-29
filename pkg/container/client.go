@@ -92,7 +92,7 @@ func (client dockerClient) CreateUpdateContainer(c Container) (string, error) {
 
 func (client dockerClient) StartImage(c Container) (string, error) {
 	bg := context.Background()
-	resp, err := client.api.ContainerCreate(bg, &c.config, &c.hostConfig, nil, nil, "blog")
+	resp, err := client.api.ContainerCreate(bg, &c.config, &c.hostConfig, nil, nil, c.name)
 	if err != nil {
 		return "", err
 	}
